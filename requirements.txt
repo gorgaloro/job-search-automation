@@ -1,1 +1,2 @@
-requests\npython-dotenv
+requests
+python-dotenv
