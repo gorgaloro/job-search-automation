@@ -82,7 +82,12 @@ def insert_hubspot_company(data, job_data):
         json=payload
     )
 
-    print("🌀 HubSpot response:", response.status_code, response.text)
+    if response.status_code >= 400:
+        print("❌ HubSpot Error:", response.status_code)
+        print("❌ HubSpot Message:", response.text)
+    else:
+        print("✅ HubSpot Success:", response.status_code)
+        print("✅ HubSpot Response:", response.json())
 
 # === Cedars-Sinai example ===
 company_data = {
