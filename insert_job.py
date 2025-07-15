@@ -71,6 +71,7 @@ def insert_hubspot_company(data, job_data):
             "postal_code": data["postal_code"],
             "industry": data["industry"],
             "linkedin_url": data["linkedin_url"],
+            "description": data.get("description", ""),  # ✅ NEW FIELD
             "job_board_url": job_data["company_job_board_url"],
             "research": "true"
         }
@@ -100,7 +101,8 @@ company_data = {
     "postal_code": "90048",
     "employees": 14000,
     "annual_revenue": None,
-    "linkedin_url": "https://www.linkedin.com/company/cedars-sinai"
+    "linkedin_url": "https://www.linkedin.com/company/cedars-sinai",
+    "description": "Cedars-Sinai is a nonprofit academic healthcare organization serving the diverse Los Angeles community and beyond with leadership in medical education, biomedical research, and patient care."  # ✅ NEW FIELD
 }
 
 job_data = {
