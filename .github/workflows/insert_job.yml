@@ -1,0 +1,31 @@
+name: Insert Job Sync
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-insert-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+          echo "HUBSPOT_TOKEN=${{ secrets.HUBSPOT_TOKEN }}" >> .env
+
+      - name: Run script
+        run: python insert_job.py
