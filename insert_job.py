@@ -54,7 +54,37 @@ def insert_job(data):
     response.raise_for_status()
     return response.status_code
 
-# === Example: Cedars-Sinai Medical Center ===
+# === Insert into HubSpot ===
+def insert_hubspot_company(data, job_data):
+    headers = {
+        "Authorization": f"Bearer {HUBSPOT_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "properties": {
+            "name": data["name"],
+            "website": data["website"],
+            "domain": data["domain"],
+            "city": data["city"],
+            "state": data["state"],
+            "postal_code": data["postal_code"],
+            "industry": data["industry"],
+            "linkedin_url": data["linkedin_url"],
+            "job_board_url": job_data["company_job_board_url"],
+            "research": "true"
+        }
+    }
+
+    response = requests.post(
+        "https://api.hubapi.com/crm/v3/objects/companies",
+        headers=headers,
+        json=payload
+    )
+
+    print("🌀 HubSpot response:", response.status_code, response.text)
+
+# === Cedars-Sinai example ===
 company_data = {
     "name": "Cedars-Sinai Medical Center",
     "website": "https://www.cedars-sinai.org",
@@ -79,9 +109,10 @@ job_data = {
     "created_at": datetime.datetime.now().isoformat()
 }
 
-# === Run It ===
+# === Run it all ===
 if __name__ == "__main__":
     company_id = insert_company(company_data)
     job_data["company_id"] = company_id
     result = insert_job(job_data)
-    print("✅ Job inserted successfully with status code:", result)
+    print("✅ Job inserted to Supabase:", result)
+    insert_hubspot_company(company_data, job_data)
