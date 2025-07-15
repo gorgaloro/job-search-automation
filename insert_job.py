@@ -1,11 +1,16 @@
+import os
 import requests
 import datetime
+from dotenv import load_dotenv
 
-# === Supabase Configuration ===
-SUPABASE_URL = "https://bkujhyehrlmpnzpwnxzu.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrdWpoeWVocmxtcG56cHdueHp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI1NDYyNjcsImV4cCI6MjA2ODEyMjI2N30.a6ZM1AiV_Qhce22axLhyMwYGbC_S0YXksXn0Q-0_WMI"
+# === Load environment variables ===
+load_dotenv()
 
-HEADERS = {
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+HUBSPOT_TOKEN = os.getenv("HUBSPOT_TOKEN")
+
+SUPABASE_HEADERS = {
     "apikey": SUPABASE_KEY,
     "Authorization": f"Bearer {SUPABASE_KEY}",
     "Content-Type": "application/json"
@@ -13,70 +18,63 @@ HEADERS = {
 
 # === Insert or retrieve company by domain ===
 def insert_company(data):
-    # Step 1: Check if the company already exists (by domain)
-    get_response = requests.get(
+    response = requests.get(
         f"{SUPABASE_URL}/rest/v1/companies",
-        headers=HEADERS,
-        params={
-            "domain": f"eq.{data['domain']}",
-            "select": "id"
-        }
+        headers=SUPABASE_HEADERS,
+        params={"domain": f"eq.{data['domain']}", "select": "id"}
     )
-    get_response.raise_for_status()
-    results = get_response.json()
+    response.raise_for_status()
+    results = response.json()
 
     if results:
-        # Company already exists
         return results[0]["id"]
     else:
-        # Insert new company
-        response = requests.post(
+        insert_response = requests.post(
             f"{SUPABASE_URL}/rest/v1/companies",
-            headers=HEADERS,
+            headers=SUPABASE_HEADERS,
             json=data
         )
-        response.raise_for_status()
+        insert_response.raise_for_status()
 
-        # Fetch most recently inserted row
-        confirm_response = requests.get(
+        confirm = requests.get(
             f"{SUPABASE_URL}/rest/v1/companies",
-            headers=HEADERS,
+            headers=SUPABASE_HEADERS,
             params={"select": "id", "order": "id.desc", "limit": 1}
         )
-        confirm_response.raise_for_status()
-        return confirm_response.json()[0]["id"]
+        confirm.raise_for_status()
+        return confirm.json()[0]["id"]
 
 # === Insert job ===
 def insert_job(data):
     response = requests.post(
         f"{SUPABASE_URL}/rest/v1/jobs",
-        headers=HEADERS,
+        headers=SUPABASE_HEADERS,
         json=data
     )
     response.raise_for_status()
     return response.status_code
 
-# === Example Data ===
+# === Example: Cedars-Sinai Medical Center ===
 company_data = {
-    "name": "Notion Labs, Inc.",
-    "website": "https://www.notion.so",
-    "domain": "notion.so",
-    "industry": "Productivity Software",
-    "city": "San Francisco",
+    "name": "Cedars-Sinai Medical Center",
+    "website": "https://www.cedars-sinai.org",
+    "domain": "cedars-sinai.org",
+    "industry": "Healthcare",
+    "city": "Los Angeles",
     "state": "CA",
-    "postal_code": "94103",
-    "employees": 600,
+    "postal_code": "90048",
+    "employees": 14000,
     "annual_revenue": None,
-    "linkedin_url": "https://www.linkedin.com/company/notionhq"
+    "linkedin_url": "https://www.linkedin.com/company/cedars-sinai"
 }
 
 job_data = {
-    "job_title": "Head of Global Account Based Marketing",
-    "job_board_url": "https://www.builtinsf.com/job/global-abm-lead/4012184",
-    "company_job_board_url": "https://www.notion.so/careers",
+    "job_title": "IT Project Manager",
+    "job_board_url": "https://careers.cedars-sinai.edu/jobs/IT-Project-Manager",
+    "company_job_board_url": "https://careers.cedars-sinai.edu/",
     "salary_min": None,
     "salary_max": None,
-    "job_description_url": "Not found on company site",
+    "job_description_url": "https://careers.cedars-sinai.edu/jobs/IT-Project-Manager",
     "research": True,
     "created_at": datetime.datetime.now().isoformat()
 }
