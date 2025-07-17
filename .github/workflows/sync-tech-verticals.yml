@@ -24,8 +24,8 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run sync_tech_verticals.py
-      env:
-        HUBSPOT_API_KEY: ${{ secrets.HUBSPOT_TOKEN }}
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+     env:
+  HUBSPOT_API_KEY: ${{ secrets.HUBSPOT_TOKEN }}
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_KEY }}
       run: python sync_tech_verticals.py
