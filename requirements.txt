@@ -7,4 +7,5 @@ tqdm>=4.0.0
 pandas>=2.3.0
 
 # Optional utilities
-numpy>=2.3.0supabase
+numpy>=2.3.0
+supabase>=2.16.0
