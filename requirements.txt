@@ -1,2 +1,10 @@
-requests
-python-dotenv
+# Core dependencies
+openai>=1.0.0
+supabase>=2.16.0
+requests>=2.32.0
+python-dotenv>=1.0.0
+tqdm>=4.0.0
+pandas>=2.3.0
+
+# Optional utilities
+numpy>=2.3.0supabase
